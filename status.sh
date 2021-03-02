@@ -1,0 +1,1 @@
+cat /var/log/openvpn/status.log | sed -n '/OpenVPN CLIENT LIST/,/ROUTING TABLE/p' | tail -n+4 | sed "s/ROUTING TABLE//g";
