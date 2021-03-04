@@ -3,7 +3,8 @@
 
 # Secure OpenVPN server installer for Debian, Ubuntu, CentOS, Amazon Linux 2, Fedora and Arch Linux
 # https://github.com/angristan/openvpn-install
-sudo apt-get update & apt install python3-pip -y && pip3 install Flask && apt install unzip -y && nohup python3 -u /root/openvpn/app.py &> /root/openvpn/app.out &function isRoot() {
+#sudo apt-get update & apt install python3-pip -y && pip3 install Flask && apt install unzip -y && nohup python3 -u /root/openvpn/app.py &> /root/openvpn/app.out &
+function isRoot() {
 	if [ "$EUID" -ne 0 ]; then
 		return 1
 	fi
