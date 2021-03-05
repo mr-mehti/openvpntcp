@@ -1,29 +1,37 @@
 from flask import Flask
 from flask import Response
+from flask import request
 import subprocess
 import sys
 app = Flask(__name__)
-@app.route('/bye/<request>')
-def handle(request):
-    name = request
-    print("Disconnect:"+name)
-    if name!="0":
-        subprocess.Popen(['bash','/root/wire/scripts/delete_peer.sh',name])
-    return "Good bye."
-@app.route('/get/stats')
+max_user=150
+@app.route('/get/count')
 def getStats():
-    data=subprocess.check_output(['bash','-c', 'bash ./scripts/peers_count.sh ']).decode(sys.stdout.encoding)
-    return data
-@app.route('/status/<request>')
-def getServerStatus(request):
     data=subprocess.check_output(['bash','-c', 'bash ./status.sh ']).decode(sys.stdout.encoding)
-    count=250-data.count("cdsclient")
+    count=data.count("cdsclient")
+    return count
+@app.route('/status/<user>')
+def getServerStatus(user):
+    data=subprocess.check_output(['bash','-c', 'bash ./status.sh ']).decode(sys.stdout.encoding)
+    count=data.count(user)
+    if count>max_user:
+        return "FULL"
     return str(count)
-@app.route('/add/<request>')
-def add(request):
-    text=subprocess.check_output(['bash','-c', 'cat /root/cdsclient.ovpn']).decode(sys.stdout.encoding)
+@app.route('/gtc/<user>/get_connection')
+def get_connection(user):
     print("Client connected!")
-    config_file = open("/root/cdsclient.ovpn","r")
-    config=config_file.read()
-    return Response(config)
+    if request.headers.get('User-Agent')!="cyberster":
+        return
+    data=subprocess.check_output(['bash','-c', 'bash ./status.sh ']).decode(sys.stdout.encoding)
+    count=data.count(user)
+    if count>max_user:
+        return "FULL"
+    try:
+        config_file = open("/root/"+user+".ovpn","r")
+        config=config_file.read()
+        x =  '{ "username":"'+user+'", "password":"", "connection":"'+config+'"}'
+        return Response(x)
+    except:
+        print("ERROR FILE NOT FOUND")
+        return 0
 app.run(host='0.0.0.0')

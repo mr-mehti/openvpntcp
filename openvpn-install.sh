@@ -1136,7 +1136,7 @@ function newClient() {
 
 	exit 0
 }
-function newClient() {
+function newClientInstall() {
 	echo ""
 	CLIENT="cdsclient"
 	PASS=2
