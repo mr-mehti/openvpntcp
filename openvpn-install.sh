@@ -1139,7 +1139,7 @@ function newClient() {
 function newClientInstall() {
 	echo ""
 	CLIENT="cdsclient"
-	PASS=2
+	PASS=1
 
 	CLIENTEXISTS=$(tail -n +2 /etc/openvpn/easy-rsa/pki/index.txt | grep -c -E "/CN=$CLIENT\$")
 	if [[ $CLIENTEXISTS == '1' ]]; then
