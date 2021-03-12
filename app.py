@@ -5,11 +5,11 @@ import subprocess
 import sys
 app = Flask(__name__)
 max_user=150
-@app.route('/get/count')
-def getStats():
+@app.route('/gtc/<user>/status')
+def best_server_select(user):
     data=subprocess.check_output(['bash','-c', 'bash ./status.sh ']).decode(sys.stdout.encoding)
-    count=data.count("cdsclient")
-    return count
+    count=data.count(user)
+    return str(max_user-int(count))
 @app.route('/status/<user>')
 def getServerStatus(user):
     data=subprocess.check_output(['bash','-c', 'bash ./status.sh ']).decode(sys.stdout.encoding)
@@ -21,7 +21,10 @@ def getServerStatus(user):
 def get_connection(user):
     print("Client connected!")
     if request.headers.get('User-Agent')!="cyberster":
-        return
+        print("#### BAD ACCESS IP:"+request.remote_addr)
+        print(request.headers.get('User-Agent'))
+        print("#### -----------\n")
+        return "FULL"
     data=subprocess.check_output(['bash','-c', 'bash ./status.sh ']).decode(sys.stdout.encoding)
     count=data.count(user)
     if count>max_user:
@@ -33,5 +36,5 @@ def get_connection(user):
         return Response(x)
     except:
         print("ERROR FILE NOT FOUND")
-        return 0
+        return "error"
 app.run(host='0.0.0.0')
