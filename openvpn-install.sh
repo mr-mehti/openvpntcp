@@ -226,20 +226,20 @@ function installQuestions() {
 		IP=$(ip -6 addr | sed -ne 's|^.* inet6 \([^/]*\)/.* scope global.*$|\1|p' | head -1)
 	fi
 	APPROVE_IP=${APPROVE_IP:-n}
-	if [[ $APPROVE_IP =~ n ]]; then
-		read -rp "IP address: " -e -i "$IP" IP
-	fi
+	#if [[ $APPROVE_IP =~ n ]]; then
+	#	read -rp "IP address: " -e -i "$IP" IP
+	#fi
 	# If $IP is a private IP address, the server must be behind NAT
-	if echo "$IP" | grep -qE '^(10\.|172\.1[6789]\.|172\.2[0-9]\.|172\.3[01]\.|192\.168)'; then
-		echo ""
-		echo "It seems this server is behind NAT. What is its public IPv4 address or hostname?"
-		echo "We need it for the clients to connect to the server."
-
-		PUBLICIP=$(curl -s https://api.ipify.org)
-		until [[ $ENDPOINT != "" ]]; do
-			read -rp "Public IPv4 address or hostname: " -e -i "$PUBLICIP" ENDPOINT
-		done
-	fi
+	#if echo "$IP" | grep -qE '^(10\.|172\.1[6789]\.|172\.2[0-9]\.|172\.3[01]\.|192\.168)'; then
+	#	echo ""
+	#	echo "It seems this server is behind NAT. What is its public IPv4 address or hostname?"
+	#	echo "We need it for the clients to connect to the server."
+#
+	#	PUBLICIP=$(curl -s https://api.ipify.org)
+	#	#until [[ $ENDPOINT != "" ]]; do
+		#	read -rp "Public IPv4 address or hostname: " -e -i "$PUBLICIP" ENDPOINT
+		#done
+	#fi
 
 	echo ""
 	echo "Checking for IPv6 connectivity..."
@@ -259,127 +259,46 @@ function installQuestions() {
 	fi
 	echo ""
 	# Ask the user if they want to enable IPv6 regardless its availability.
-	until [[ $IPV6_SUPPORT =~ (y|n) ]]; do
-		read -rp "Do you want to enable IPv6 support (NAT)? [y/n]: " -e -i $SUGGESTION IPV6_SUPPORT
-	done
+	#until [[ $IPV6_SUPPORT =~ (y|n) ]]; do
+	#	read -rp "Do you want to enable IPv6 support (NAT)? [y/n]: " -e -i $SUGGESTION IPV6_SUPPORT
+	#done
 	echo ""
 	echo "What port do you want OpenVPN to listen to?"
 	echo "   1) Default: 1194"
 	echo "   2) Custom"
 	echo "   3) Random [49152-65535]"
-	until [[ $PORT_CHOICE =~ ^[1-3]$ ]]; do
-		read -rp "Port choice [1-3]: " -e -i 1 PORT_CHOICE
-	done
-	case $PORT_CHOICE in
-	1)
-		PORT="1194"
-		;;
-	2)
-		until [[ $PORT =~ ^[0-9]+$ ]] && [ "$PORT" -ge 1 ] && [ "$PORT" -le 65535 ]; do
-			read -rp "Custom port [1-65535]: " -e -i 1194 PORT
-		done
-		;;
-	3)
-		# Generate random number within private ports range
-		PORT=$(shuf -i49152-65535 -n1)
-		echo "Random Port: $PORT"
-		;;
-	esac
-	echo ""
+	#until [[ $PORT_CHOICE =~ ^[1-3]$ ]]; do
+	#	read -rp "Port choice [1-3]: " -e -i 1 PORT_CHOICE
+	#done
+	#case $PORT_CHOICE in
+	##	PORT="1194"
+	#	;;
+	#2)
+	#	until [[ $PORT =~ ^[0-9]+$ ]] && [ "$PORT" -ge 1 ] && [ "$PORT" -le 65535 ]; do
+	#		read -rp "Custom port [1-65535]: " -e -i 1194 PORT
+	#	done
+	#	;;
+	#3)
+	#	# Generate random number within private ports range
+	#	PORT=$(shuf -i49152-65535 -n1)
+	#	echo "Random Port: $PORT"
+	#	;;
+	PORT="1194"
+	#esac
+	#echo ""
 	echo "What protocol do you want OpenVPN to use?"
 	echo "UDP is faster. Unless it is not available, you shouldn't use TCP."
 	echo "   1) UDP"
 	echo "   2) TCP"
-	until [[ $PROTOCOL_CHOICE =~ ^[1-2]$ ]]; do
-		read -rp "Protocol [1-2]: " -e -i 1 PROTOCOL_CHOICE
-	done
-	case $PROTOCOL_CHOICE in
-	1)
-		PROTOCOL="udp"
-		;;
-	2)
-		PROTOCOL="tcp"
-		;;
-	esac
-	echo ""
-	echo "What DNS resolvers do you want to use with the VPN?"
-	echo "   1) Current system resolvers (from /etc/resolv.conf)"
-	echo "   2) Self-hosted DNS Resolver (Unbound)"
-	echo "   3) Cloudflare (Anycast: worldwide)"
-	echo "   4) Quad9 (Anycast: worldwide)"
-	echo "   5) Quad9 uncensored (Anycast: worldwide)"
-	echo "   6) FDN (France)"
-	echo "   7) DNS.WATCH (Germany)"
-	echo "   8) OpenDNS (Anycast: worldwide)"
-	echo "   9) Google (Anycast: worldwide)"
-	echo "   10) Yandex Basic (Russia)"
-	echo "   11) AdGuard DNS (Anycast: worldwide)"
-	echo "   12) NextDNS (Anycast: worldwide)"
-	echo "   13) Custom"
-	until [[ $DNS =~ ^[0-9]+$ ]] && [ "$DNS" -ge 1 ] && [ "$DNS" -le 13 ]; do
-		read -rp "DNS [1-12]: " -e -i 11 DNS
-		if [[ $DNS == 2 ]] && [[ -e /etc/unbound/unbound.conf ]]; then
-			echo ""
-			echo "Unbound is already installed."
-			echo "You can allow the script to configure it in order to use it from your OpenVPN clients"
-			echo "We will simply add a second server to /etc/unbound/unbound.conf for the OpenVPN subnet."
-			echo "No changes are made to the current configuration."
-			echo ""
-
-			until [[ $CONTINUE =~ (y|n) ]]; do
-				read -rp "Apply configuration changes to Unbound? [y/n]: " -e CONTINUE
-			done
-			if [[ $CONTINUE == "n" ]]; then
-				# Break the loop and cleanup
-				unset DNS
-				unset CONTINUE
-			fi
-		elif [[ $DNS == "13" ]]; then
-			until [[ $DNS1 =~ ^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$ ]]; do
-				read -rp "Primary DNS: " -e DNS1
-			done
-			until [[ $DNS2 =~ ^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$ ]]; do
-				read -rp "Secondary DNS (optional): " -e DNS2
-				if [[ $DNS2 == "" ]]; then
-					break
-				fi
-			done
-		fi
-	done
-	echo ""
-	echo "Do you want to use compression? It is not recommended since the VORACLE attack make use of it."
-	until [[ $COMPRESSION_ENABLED =~ (y|n) ]]; do
-		read -rp"Enable compression? [y/n]: " -e -i n COMPRESSION_ENABLED
-	done
-	if [[ $COMPRESSION_ENABLED == "y" ]]; then
-		echo "Choose which compression algorithm you want to use: (they are ordered by efficiency)"
-		echo "   1) LZ4-v2"
-		echo "   2) LZ4"
-		echo "   3) LZ0"
-		until [[ $COMPRESSION_CHOICE =~ ^[1-3]$ ]]; do
-			read -rp"Compression algorithm [1-3]: " -e -i 1 COMPRESSION_CHOICE
-		done
-		case $COMPRESSION_CHOICE in
-		1)
-			COMPRESSION_ALG="lz4-v2"
-			;;
-		2)
-			COMPRESSION_ALG="lz4"
-			;;
-		3)
-			COMPRESSION_ALG="lzo"
-			;;
-		esac
-	fi
+	PROTOCOL="udp"
+	COMPRESSION_ENABLED="n"
 	echo ""
 	echo "Do you want to customize encryption settings?"
 	echo "Unless you know what you're doing, you should stick with the default parameters provided by the script."
 	echo "Note that whatever you choose, all the choices presented in the script are safe. (Unlike OpenVPN's defaults)"
 	echo "See https://github.com/angristan/openvpn-install#security-and-encryption to learn more."
 	echo ""
-	until [[ $CUSTOMIZE_ENC =~ (y|n) ]]; do
-		read -rp "Customize encryption settings? [y/n]: " -e -i n CUSTOMIZE_ENC
-	done
+	CUSTOMIZE_ENC="n"
 	if [[ $CUSTOMIZE_ENC == "n" ]]; then
 		# Use default, sane and fast parameters
 		CIPHER="AES-128-GCM"
@@ -602,7 +521,7 @@ function installQuestions() {
 }
 
 function installOpenVPN() {
-	if [[ $AUTO_INSTALL == "n" ]]; then
+	if [[ $AUTO_INSTALL == "y" ]]; then
 		# Set default choices so that no questions will be asked.
 		APPROVE_INSTALL=${APPROVE_INSTALL:-y}
 		APPROVE_IP=${APPROVE_IP:-y}
@@ -626,7 +545,7 @@ function installOpenVPN() {
 	fi
 
 	# Run setup questions first, and set other variales if auto-install
-	#installQuestions
+	installQuestions
 
 	# Get the "public" interface from the default route
 	NIC=$(ip -4 route ls | grep default | grep -Po '(?<=dev )(\S+)' | head -1)
