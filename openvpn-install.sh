@@ -1119,7 +1119,7 @@ function newClientInstall() {
 			echo "</tls-auth>"
 			;;
 		esac
-	} >>"root/$CLIENT.ovpn"
+	} >>"/root/$CLIENT.ovpn"
 
 	echo ""
 	echo "The configuration file has been written to $homeDir/$CLIENT.ovpn."
