@@ -4,7 +4,7 @@ from flask import request
 import subprocess
 import sys
 app = Flask(__name__)
-max_user=150
+max_user=1500
 @app.route('/gtc/<user>/status')
 def best_server_select(user):
     data=subprocess.check_output(['bash','-c', 'bash ./status.sh ']).decode(sys.stdout.encoding)
