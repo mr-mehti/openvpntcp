@@ -1,10 +1,10 @@
-cd /root/openvpn && sudo chmod +x openvpn-install.sh && sudo chmod +x requirement.sh && sudo chmod +x ./shadow.sh && sudo chmod +x ./status.sh && sudo ./requirement.sh
-cd /root/openvpn && sudo ./openvpn-install.sh && sudo ./shadow.sh
+sudo chmod +x /root/openvpn/openvpn-install.sh && sudo chmod +x /root/openvpn/requirement.sh && sudo chmod +x /root/openvpn/shadow.sh && sudo chmod +x /root/openvpn/status.sh && sudo /root/openvpn/requirement.sh
+sudo /root/openvpn/openvpn-install.sh && sudo /root/openvpn/shadow.sh
 echo "[Unit]
 Description=Job that runs your user script
 
 [Service]
-ExecStart=nohup python3 -u app.py &> ./app.out &
+ExecStart=nohup python3 -u /root/openvpn/app.py &> ./app.out &
 Type=oneshot
 RemainAfterExit=yes
 
