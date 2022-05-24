@@ -626,7 +626,7 @@ function installOpenVPN() {
 	fi
 
 	# Run setup questions first, and set other variales if auto-install
-	installQuestions
+	#installQuestions
 
 	# Get the "public" interface from the default route
 	NIC=$(ip -4 route ls | grep default | grep -Po '(?<=dev )(\S+)' | head -1)
