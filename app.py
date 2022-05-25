@@ -41,11 +41,11 @@ def get_connection(user):
 @app.route('/gtc/<user>/shadowsocks')
 def shadowsocks(user):
     print("Client connected!")
-    #if request.headers.get('User-Agent')!="cyberster":
-    #    print("#### BAD ACCESS IP:"+request.remote_addr)
-    #    print(request.headers.get('User-Agent'))
-    #    print("#### -----------\n")
-     #   return "FULL"
+    if request.headers.get('User-Agent')!="cyberster":
+        print("#### BAD ACCESS IP:"+request.remote_addr)
+        print(request.headers.get('User-Agent'))
+        print("#### -----------\n")
+        return "FULL"
     #//data=subprocess.check_output(['bash','-c', 'bash ./status.sh ']).decode(sys.stdout.encoding)
     #count=data.count(user)
     #if count>max_user:
