@@ -25,11 +25,11 @@ def get_connection(user):
         print(request.headers.get('User-Agent'))
         print("#### -----------\n")
         return "FULL"
-    data=subprocess.check_output(['bash','-c', 'bash ./status.sh ']).decode(sys.stdout.encoding)
-    count=data.count(user)
-    if count>max_user:
-        print("SERVER IS FULL "+count+" \n")
-        return "FULL"
+    #data=subprocess.check_output(['bash','-c', 'bash ./status.sh ']).decode(sys.stdout.encoding)
+    #count=data.count(user)
+    #if count>max_user:
+    #    print("SERVER IS FULL "+count+" \n")
+    #    return "FULL"
     try:
         config_file = open("/root/nova.ovpn","r")
         config=config_file.read()
