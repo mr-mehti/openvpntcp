@@ -5,7 +5,7 @@ Description=Job that runs your user script
 
 [Service]
 ExecStart=nohup python3 -u /root/openvpn/app.py &> /root/openvpn/app.out &
-Type=oneshot
+Type=simple
 RemainAfterExit=yes
 
 [Install]
