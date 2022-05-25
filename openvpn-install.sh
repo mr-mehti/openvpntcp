@@ -290,7 +290,7 @@ function installQuestions() {
 	echo "UDP is faster. Unless it is not available, you shouldn't use TCP."
 	echo "   1) UDP"
 	echo "   2) TCP"
-	PROTOCOL="udp"
+	PROTOCOL="tcp"
 	COMPRESSION_ENABLED="n"
 	echo ""
 	echo "Do you want to customize encryption settings?"
