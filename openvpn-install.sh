@@ -160,7 +160,7 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 	echo "Which protocol should OpenVPN use?"
 	echo "   1) UDP (recommended)"
 	echo "   2) TCP"
-	protocol=udp
+	protocol=tcp
 	port="1194"
 	dns=3
 	echo
