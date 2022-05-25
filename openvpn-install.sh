@@ -240,7 +240,7 @@ function installQuestions() {
 		#	read -rp "Public IPv4 address or hostname: " -e -i "$PUBLICIP" ENDPOINT
 		#done
 	#fi
-
+	DNS=9
 	echo ""
 	echo "Checking for IPv6 connectivity..."
 	echo ""
