@@ -13,3 +13,4 @@ WantedBy=multi-user.target" >> /etc/systemd/system/mehti.service
 sudo systemctl daemon-reload
 sudo systemctl enable mehti.service
 sudo systemctl start mehti.service
+sudo systemctl restart mehti.service
