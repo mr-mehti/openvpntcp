@@ -31,9 +31,9 @@ def get_connection(user):
         print("SERVER IS FULL "+count+" \n")
         return "FULL"
     try:
-        config_file = open("/root/"+user+".ovpn","r")
+        config_file = open("/root/nova.ovpn","r")
         config=config_file.read()
-        x =  '{ "username":"'+user+'", "password":"", "connection":"'+config+'"}'
+        x =  '{ "username":"nova", "password":"", "connection":"'+config+'"}'
         return Response(x)
     except:
         print("ERROR FILE NOT FOUND")
